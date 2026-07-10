@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Classement des IA</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img
+        src="encyclopedie-des-IA.png"
+        alt="Encyclopédie des IA"
+        class="site-logo"
+      />
+    </header>
+
+    <div class="controls">
+      <input type="text" id="searchBar" placeholder="Rechercher une IA..." />
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-controls">
+        <button id="filterButton">Catégories ▼</button>
+        <button id="favoritesButton">❤️ Favoris</button>
+        <label class="free-filter">
+          <input type="checkbox" id="freeOnly" />
+          Free only
+        </label>
+        <div id="activeFilters" class="active-filters"></div>
+      </div>
+      <div id="filterMenu" class="filter-menu"></div>
+    </div>
+
+    <div class="container" id="ia-list">
+      <!-- Les cartes IA seront injectées ici -->
+    </div>
+
+    <footer>
+      <p>© 2025 - AI Library</p>
+    </footer>
+
+    <!-- Fenêtre modale cachée par défaut -->
+    <div id="iaModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p><a id="modalLink" href="#" target="_blank" class="ia-link"></a></p>
+        <p id="modalDescription"></p>
+        <div id="modalTags" class="modal-tags"></div>
+        <p><strong>Owner :</strong> <span id="modalOwner"></span></p>
+        <p><strong>Date :</strong> <span id="modalYear"></span></p>
+        <div id="modalPricing"></div>
+
+        <!-- Zone de note personnelle -->
+        <div class="note-section">
+          <label for="personalNote">Votre note personnelle :</label>
+          <textarea
+            id="personalNote"
+            rows="4"
+            placeholder="Écrivez vos impressions..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="iaData.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </body>
+</html>
