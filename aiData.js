@@ -204,6 +204,22 @@ const iaData = [
       plans: [{ name: "Business", price: 0, period: "custom" }],
     },
   },
+  {
+    name: "Stable Diffusion",
+    longDescription:
+      "Stable Diffusion est un modèle open-source de génération d’images permettant de créer des visuels détaillés à partir de texte.",
+    year: 2022,
+    link: "https://stability.ai/",
+    owner: "Stability AI",
+    categories: ["image"],
+    pricing: {
+      free: true,
+      plans: [
+        { name: "API", price: 10, period: "month" }
+      ]
+    },
+  },
+
 ];
 
 export { iaData, officialCategories };
