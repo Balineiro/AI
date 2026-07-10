@@ -3,12 +3,27 @@ import { iaData, officialCategories } from "./aiData.js";
 const allCategories = officialCategories;
 
 /* ============================
+   CATALOGUE — numéros de fiche
+============================ */
+
+const catalogNumbers = new Map();
+iaData.forEach((ia, i) => {
+  catalogNumbers.set(ia.name, String(i + 1).padStart(3, "0"));
+});
+
+/* ============================
    FAVORIS
 ============================ */
 
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
 let favoritesMode = false;
+
+/* ============================
+   NOTES PERSONNELLES
+============================ */
+
+let personalNotes = JSON.parse(localStorage.getItem("personalNotes")) || {};
 
 /* ============================
    ÉLÉMENTS DOM
@@ -38,10 +53,15 @@ const modalYear = document.getElementById("modalYear");
 const modalOwner = document.getElementById("modalOwner");
 const modalTags = document.getElementById("modalTags");
 const modalLink = document.getElementById("modalLink");
-const modalFavorite = document.getElementById("modalFavorite");
+const modalPricing = document.getElementById("modalPricing");
+const modalCode = document.getElementById("modalCode");
+const personalNote = document.getElementById("personalNote");
 const closeBtn = document.querySelector(".close");
 
 let currentIA = null;
+
+const BOOKMARK_PATH =
+  "M5 3h14a2 2 0 0 1 2 2v16l-9-4-9 4V5a2 2 0 0 1 2-2z";
 
 /* ============================
    RENDER IA
@@ -59,27 +79,28 @@ function renderIA(list = iaData) {
       .join("");
 
     card.innerHTML = `
-      <svg class="heart-icon" data-name="${ia.name}" viewBox="0 0 24 24">
-        <path d="M15.7 4C18.87 4 21 6.98 21 9.76C21 15.39 12.16 20 12 20C11.84 20 3 15.39 3 9.76C3 6.98 5.13 4 8.3 4C10.12 4 11.31 4.91 12 5.71C12.69 4.91 13.88 4 15.7 4Z"/>
+      <svg class="bookmark-icon" data-name="${ia.name}" viewBox="0 0 24 24">
+        <path d="${BOOKMARK_PATH}"/>
       </svg>
-    
+      <span class="catalog-number">N&deg;${catalogNumbers.get(ia.name)}</span>
+
       <div class="ia-title">${ia.name}</div>
+      <div class="ia-meta-line">${ia.year} &middot; ${ia.owner}</div>
       <div class="ia-tags">${categoriesHTML}</div>
-      <small>Date: ${ia.year} | Owner: ${ia.owner}</small>
     `;
 
     card.addEventListener("click", () => openModal(ia));
 
-    const heart = card.querySelector(".heart-icon");
+    const bookmark = card.querySelector(".bookmark-icon");
 
     if (favorites.includes(ia.name)) {
-      heart.classList.add("active");
+      bookmark.classList.add("active");
     }
 
-    heart.addEventListener("click", (e) => {
+    bookmark.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleFavorite(ia.name);
-      heart.classList.toggle("active");
+      bookmark.classList.toggle("active");
     });
 
     container.appendChild(card);
@@ -108,11 +129,13 @@ function toggleFavorite(name) {
 function openModal(ia) {
   currentIA = ia.name;
 
-  // Titre + cœur
+  modalCode.textContent = `Fiche N°${catalogNumbers.get(ia.name)}`;
+
+  // Titre + ruban
   modalTitle.innerHTML = `
     <span class="modal-title-text">${ia.name}</span>
-    <svg class="heart-icon modal-heart" viewBox="0 0 24 24">
-      <path d="M15.7 4C18.87 4 21 6.98 21 9.76C21 15.39 12.16 20 12 20C11.84 20 3 15.39 3 9.76C3 6.98 5.13 4 8.3 4C10.12 4 11.31 4.91 12 5.71C12.69 4.91 13.88 4 15.7 4Z"/>
+    <svg class="bookmark-icon modal-bookmark" viewBox="0 0 24 24">
+      <path d="${BOOKMARK_PATH}"/>
     </svg>
   `;
 
@@ -127,43 +150,45 @@ function openModal(ia) {
   modalLink.href = ia.link;
   modalLink.textContent = ia.link;
 
-  // Sélection du cœur
-  const modalHeart = modalTitle.querySelector(".modal-heart");
+  // Sélection du ruban
+  const modalBookmark = modalTitle.querySelector(".modal-bookmark");
 
-  // État initial
   if (favorites.includes(ia.name)) {
-    modalHeart.classList.add("active");
+    modalBookmark.classList.add("active");
   } else {
-    modalHeart.classList.remove("active");
+    modalBookmark.classList.remove("active");
   }
 
-  // Toggle fiable
-  modalHeart.onclick = (e) => {
+  modalBookmark.onclick = (e) => {
     e.stopPropagation();
     toggleFavorite(ia.name);
-    modalHeart.classList.toggle("active");
+    modalBookmark.classList.toggle("active");
   };
+
+  // Note personnelle
+  personalNote.value = personalNotes[ia.name] || "";
 
   modal.style.display = "block";
 
+  // Tarification
   modalPricing.innerHTML = "";
 
   if (ia.pricing) {
     const tags = [];
 
     if (ia.pricing.free) {
-      tags.push(`<span class="pricing-tag pricing-free">Free</span>`);
+      tags.push(`<span class="pricing-tag pricing-free">Gratuit</span>`);
     }
     if (ia.pricing.plans && ia.pricing.plans.length > 0) {
       tags.push(
-        `<span class="pricing-tag pricing-paid">Plans disponibles</span>`
+        `<span class="pricing-tag pricing-paid">Offres payantes</span>`
       );
     }
 
-    const plansHTML = ia.pricing.plans
+    const plansHTML = (ia.pricing.plans || [])
       .map(
         (plan) =>
-          `<div class="pricing-plan">${plan.name} – ${plan.price} €/ ${plan.period}</div>`
+          `<div class="pricing-plan">${plan.name} — ${plan.price} € / ${plan.period}</div>`
       )
       .join("");
 
@@ -190,14 +215,19 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeModal();
 });
 
+/* Sauvegarde de la note personnelle au fil de la frappe */
+personalNote.addEventListener("input", () => {
+  if (!currentIA) return;
+  personalNotes[currentIA] = personalNote.value;
+  localStorage.setItem("personalNotes", JSON.stringify(personalNotes));
+});
+
 /* ============================
    RECHERCHE
 ============================ */
 
 function filterIA() {
-  const query = searchBar.value.toLowerCase();
-  const filtered = iaData.filter((ia) => ia.name.toLowerCase().includes(query));
-  applyFilters(filtered);
+  applyFilters();
 }
 
 searchBar.addEventListener("input", filterIA);
@@ -269,7 +299,7 @@ function applyFilters(baseList = iaData) {
     );
   }
 
-  // Free only
+  // Gratuit seulement
   const freeOnly = document.getElementById("freeOnly").checked;
   if (freeOnly) {
     filtered = filtered.filter((ia) => ia.pricing?.free);

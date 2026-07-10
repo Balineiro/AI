@@ -2,29 +2,47 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <title>Classement des IA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encyclopédie des IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,500;1,9..144,600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header>
-      <img
-        src="encyclopédie des IA.png"
-        alt="Encyclopédie des IA"
-        class="site-logo"
-      />
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="eyebrow">Catalogue vivant &mdash; édition 2025</p>
+        <h1 class="site-title">
+          Encyclopédie <em>des</em> IA
+        </h1>
+        <p class="site-subtitle">
+          Un inventaire raisonné des intelligences artificielles qui comptent.
+        </p>
+      </div>
+      <div class="header-rule" aria-hidden="true"></div>
     </header>
 
     <div class="controls">
-      <input type="text" id="searchBar" placeholder="Rechercher une IA..." />
+      <span class="search-label">Rechercher</span>
+      <input type="text" id="searchBar" placeholder="Nom d'une IA…" />
     </div>
 
     <div class="filter-bar">
       <div class="filter-controls">
-        <button id="filterButton">Catégories ▼</button>
-        <button id="favoritesButton">❤️ Favoris</button>
+        <button id="filterButton">Catégories <span class="chevron">▾</span></button>
+        <button id="favoritesButton">
+          <svg class="fav-btn-icon" viewBox="0 0 24 24">
+            <path d="M5 3h14a2 2 0 0 1 2 2v16l-9-4-9 4V5a2 2 0 0 1 2-2z" />
+          </svg>
+          Favoris
+        </button>
         <label class="free-filter">
           <input type="checkbox" id="freeOnly" />
-          Free only
+          <span>Gratuit seulement</span>
         </label>
         <div id="activeFilters" class="active-filters"></div>
       </div>
@@ -36,28 +54,31 @@
     </div>
 
     <footer>
-      <p>© 2025 - AI Library</p>
+      <p>Encyclopédie des IA — fiche après fiche, depuis 2025</p>
     </footer>
 
     <!-- Fenêtre modale cachée par défaut -->
     <div id="iaModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
+        <div class="modal-catalog-code" id="modalCode"></div>
         <h2 id="modalTitle"></h2>
         <p><a id="modalLink" href="#" target="_blank" class="ia-link"></a></p>
         <p id="modalDescription"></p>
         <div id="modalTags" class="modal-tags"></div>
-        <p><strong>Owner :</strong> <span id="modalOwner"></span></p>
-        <p><strong>Date :</strong> <span id="modalYear"></span></p>
+        <div class="modal-meta">
+          <p><strong>Éditeur</strong> <span id="modalOwner"></span></p>
+          <p><strong>Parution</strong> <span id="modalYear"></span></p>
+        </div>
         <div id="modalPricing"></div>
 
         <!-- Zone de note personnelle -->
         <div class="note-section">
-          <label for="personalNote">Votre note personnelle :</label>
+          <label for="personalNote">Votre note personnelle</label>
           <textarea
             id="personalNote"
             rows="4"
-            placeholder="Ecrivez vos impressions..."
+            placeholder="Écrivez vos impressions…"
           ></textarea>
         </div>
       </div>
