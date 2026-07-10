@@ -1,4 +1,4 @@
-import { iaData, officialCategories } from "./iaData.js";
+import { iaData, officialCategories } from "./aiData.js";
 
 const allCategories = officialCategories;
 

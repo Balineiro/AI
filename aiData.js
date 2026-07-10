@@ -205,3 +205,5 @@ const iaData = [
     },
   },
 ];
+
+export { iaData, officialCategories };
